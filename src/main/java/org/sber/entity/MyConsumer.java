@@ -4,13 +4,18 @@ import org.sber.interfaces.DeferredExecutor;
 
 import java.util.function.Consumer;
 
-public class MyConsumer  implements DeferredExecutor{
+public class MyConsumer<T> implements DeferredExecutor<T>{
     long delay;
     Consumer consumer;
+    int replyQuantity = 10;
 
     public MyConsumer(long delay, Consumer consumer) {
-        this.delay = delay;
+        this.setDelay(delay);
         this.consumer = consumer;
+    }
+
+    public int getReplyQuantity() {
+        return replyQuantity;
     }
 
     @Override
@@ -19,7 +24,10 @@ public class MyConsumer  implements DeferredExecutor{
     }
 
     @Override
-    public void setDelay(long delay) {
+    public synchronized void setDelay(long delay) {
+        if (delay < 0.9) {
+            throw new IllegalArgumentException("The argument must be greater or equal to 1 ");
+        }
         this.delay = delay;
     }
 
